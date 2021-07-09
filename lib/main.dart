@@ -13,6 +13,7 @@ void main() {
   locator.registerLazySingleton(() => WeatherRepository());//gerektiğinde nesne üretir. ve birdaha üretmez
   //dependency injection
   locator.registerLazySingleton(() => WeatherApiClient());
+
   runApp(const MyApp());
 }
 
