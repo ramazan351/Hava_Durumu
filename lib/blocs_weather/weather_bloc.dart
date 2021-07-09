@@ -18,7 +18,15 @@ class WeatherBloc extends Bloc<WeatherEvent,WeatherState>{
     if(event is FetchWeatherEvent) {
       yield WeatherLoadingState();
       try{
-
+        WeatherModel _pulledModel= await _weatherRepository.getWeatherForecast(event.cityName);
+        yield WeatherLoadedState(weatherModel: _pulledModel);
+      }catch(_){
+        print("$_ Hatası ile karşılaşıldı (Weather_bloc)");
+        yield WeatherErrorState();
+      }
+    }
+    else if(event is RefreshWeatherEvent) {
+      try{
         WeatherModel _pulledModel= await _weatherRepository.getWeatherForecast(event.cityName);
         yield WeatherLoadedState(weatherModel: _pulledModel);
       }catch(_){

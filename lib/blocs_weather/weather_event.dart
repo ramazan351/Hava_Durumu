@@ -8,6 +8,13 @@ class FetchWeatherEvent extends WeatherEvent{
   final String cityName;
   FetchWeatherEvent({required this.cityName});
   @override
-  // TODO: implement props
+
+  List<Object?> get props => [cityName];
+}
+class RefreshWeatherEvent extends WeatherEvent{
+  final String cityName;
+  RefreshWeatherEvent({required this.cityName});
+  @override
+
   List<Object?> get props => [cityName];
 }
