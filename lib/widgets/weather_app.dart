@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc_weather/blocs_weather/bloc.dart';
 import 'package:bloc_weather/blocs_weather/theme_bloc/theme_bloc.dart';
+import 'package:bloc_weather/widgets/backgrouned_container.dart';
 import 'package:bloc_weather/widgets/least_update.dart';
 import 'package:bloc_weather/widgets/location.dart';
 import 'package:bloc_weather/widgets/maxmin_temperatures.dart';
@@ -59,40 +60,48 @@ class _WeatherAppState extends State<WeatherApp> {
           if (state is WeatherLoadedState) {
             final weatherSortName =
                 state.weatherModel!.consolidatedWeather?[0].weatherStateAbbr;
-            BlocProvider.of<ThemeBloc>(context)
-                .add(ChangeThemeEvent(weatherShortName: weatherSortName as String));
+            BlocProvider.of<ThemeBloc>(context).add(
+                ChangeThemeEvent(weatherShortName: weatherSortName as String));
             _completer.complete();
 
             _completer = Completer();
-            return RefreshIndicator(
-              onRefresh: () {
-                blocEvent.add(RefreshWeatherEvent(cityName: selectedCity));
-                snacbarShow();
-                return _completer.future;
-              },
-              child: ListView(
-                children: [
-                  Center(
-                      child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: MyLocationWidget(
-                            city: selectedCity,
-                          ))),
-                  const Center(
-                      child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: MyLeastUpdateWidget())),
-                  const Center(
-                      child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: MyWeatherImageWidget())),
-                  const Center(
-                      child: Padding(
-                          padding: EdgeInsets.all(15),
-                          child: MyMaxMinTemperaturesWidget())),
-                ],
-              ),
-            );
+            return BlocBuilder(
+                bloc: BlocProvider.of<ThemeBloc>(context),
+                builder: (ctx, themeState) {
+                  return BackgroundContainer(
+                    color: (themeState as ChangeThemeState).color,
+                    child: RefreshIndicator(
+                      onRefresh: () {
+                        blocEvent
+                            .add(RefreshWeatherEvent(cityName: selectedCity));
+                        snacbarShow();
+                        return _completer.future;
+                      },
+                      child: ListView(
+                        children: [
+                          Center(
+                              child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: MyLocationWidget(
+                                    city: selectedCity,
+                                  ))),
+                          const Center(
+                              child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: MyLeastUpdateWidget())),
+                          const Center(
+                              child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: MyWeatherImageWidget())),
+                          const Center(
+                              child: Padding(
+                                  padding: EdgeInsets.all(15),
+                                  child: MyMaxMinTemperaturesWidget())),
+                        ],
+                      ),
+                    ),
+                  );
+                });
           }
 
           return const Center(
